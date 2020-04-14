@@ -1,7 +1,19 @@
 #pragma once
 
 #include <QtWidgets/QWidget>
+#include <QListWidget>
+#include <QLineEdit>
 #include "ui_who2clean.h"
+
+class RotaOptions
+{
+public:
+	RotaOptions();
+	RotaOptions(QListWidget*, QLineEdit*, QLineEdit*);
+	QListWidget* optionsList;
+	QLineEdit* optionName;
+	QLineEdit* optionParameter;
+};
 
 class Who2Clean : public QWidget
 {
@@ -11,10 +23,18 @@ public:
 	Who2Clean(QWidget *parent = Q_NULLPTR);
 
 private slots:
-	void HandleAddButton();
+	void HandleAddPersonButton();
+	void HandleAddTaskButton();
+	void HandleClearPersonButton();
+	void HandleClearTaskButton();
 
 private:
 	Ui::Who2CleanClass ui;
-	QVBoxLayout* CreateOptionsSection(QString, QString);
+	std::pair<QVBoxLayout*, RotaOptions> CreateOptionsSection(QString, QString);
 	QGridLayout* CreateIterationSection();
+	void HandleAddButton(RotaOptions);
+	void HandleClearButton(RotaOptions);
+
+	RotaOptions personOptions;
+	RotaOptions taskOptions;
 };
