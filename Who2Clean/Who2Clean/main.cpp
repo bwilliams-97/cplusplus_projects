@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "who2clean.h"
+#include "rotacomputer.h"
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])

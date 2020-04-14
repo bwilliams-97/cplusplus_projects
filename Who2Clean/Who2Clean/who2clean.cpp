@@ -142,7 +142,7 @@ void Who2Clean::HandleAddButton(RotaOptions options) {
     QString parameterString = options.optionParameter->text();
 
     // Append to list
-    QString listItem = optionString.append(", ");
+    QString listItem = optionString.append(" ");
     listItem = listItem.append(parameterString);
     options.optionsList->addItem(listItem);
 
@@ -150,4 +150,11 @@ void Who2Clean::HandleAddButton(RotaOptions options) {
     options.optionName->setText("");
     options.optionParameter->setText("");
 }
-
+/*
+Next work:
+Class that has three functions:
+1. Constructor - creates dictionary of task : integer
+2. Compute - list of length iterations
+- each week, fill in dictionary mapping task to person.
+3. Write to file - Write each row to file.
+*/
