@@ -27,6 +27,7 @@ private slots:
 	void HandleAddTaskButton();
 	void HandleClearPersonButton();
 	void HandleClearTaskButton();
+	void HandleComputeButton();
 
 private:
 	Ui::Who2CleanClass ui;
@@ -37,4 +38,6 @@ private:
 
 	RotaOptions personOptions;
 	RotaOptions taskOptions;
+
+	QSpinBox* iterationSpinBox;
 };

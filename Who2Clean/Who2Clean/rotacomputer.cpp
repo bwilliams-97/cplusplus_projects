@@ -8,17 +8,18 @@
 #include <string.h>
 #include <sstream>
 #include <string>
+#include <stdlib.h>
+#include <time.h>
 
 using namespace std;
 
-rotacomputer::rotacomputer() {
-	vector<map<string, string>> computedRota(0);
-}
-
 rotacomputer::rotacomputer(QListWidget* personListWidget, QListWidget* taskListWidget, int iterations) {
+	// Link function to compute button
+	// Display table somehow inside window?
 	int numTasks = taskListWidget->count();
 
-	vector<map<string, string>> computedRota(numTasks);
+	vector<map<int, string>> computedRotaInit(iterations);
+	computedRota = computedRotaInit;
 
 	vector<string> tasks(numTasks);
 	vector<string> people(taskListWidget->count());
@@ -26,29 +27,58 @@ rotacomputer::rotacomputer(QListWidget* personListWidget, QListWidget* taskListW
 	for (int taskIndex = 0; taskIndex < numTasks; taskIndex++)
 	{
 		QListWidgetItem* item = taskListWidget->item(taskIndex);
-		tasks[taskIndex] = item->data;
+		tasks[taskIndex] = item->text().toStdString();
 	}
 
-	for (int personIndex = 0; personIndex < people.size; personIndex++) {
+	for (int personIndex = 0; personIndex < people.size(); personIndex++) {
 		QListWidgetItem* item = personListWidget->item(personIndex);
-		people[personIndex] = item->data;
+		people[personIndex] = item->text().toStdString();
 	}
 
 	computeRota(people, tasks, iterations);
+
+	writeToCsv(tasks);
 }
 
-void rotacomputer::writeToCsv() {
+void rotacomputer::writeToCsv(vector<string> tasks) {
 	// Open file stream
+	std::ofstream csvfile;
+	csvfile.open("rota.csv");
+
 	// Write top row as tasks
+	ostringstream topRow;
+	topRow << "Task";
+	for (string taskName : tasks) {
+		topRow << "," + taskName;
+	}
+	csvfile << topRow.str() + "\n";
+
 	// Write remaining rows as people
+	int iter_idx = 0;
+	for (map<int, string> iteration : computedRota) {
+		ostringstream currentRow;
+		currentRow << "Iteration: " + to_string(iter_idx++);
+		for (int taskIndex = 0; taskIndex < iteration.size(); taskIndex++) {
+			currentRow << "," + iteration[taskIndex];
+		}
+		csvfile << currentRow.str() + "\n";
+	}
+
 	// Close file
+	csvfile.close();
 }
 
 void rotacomputer::computeRota(vector<string> people, vector<string> tasks, int iterations) {
 	/* Current approach: Generate a probability of using a particular person
 	by summing laziness across all people.
 	*/
-	vector<pair<string, int>> peopleWithLaziness(people.size());
+
+	// Initialise random seed
+	srand(time(NULL));
+
+	vector<int> personLaziness(people.size());
+	vector<string> peopleNames(people.size());
+
 	double totalInverseLaziness = 0;
 
 	// Split entries into person, laziness
@@ -57,31 +87,49 @@ void rotacomputer::computeRota(vector<string> people, vector<string> tasks, int 
 
 		string personName;
 		stringStream >> personName;
+		peopleNames[personIndex] = personName;
 
 		int laziness;
 		stringStream >> laziness;
 
-		peopleWithLaziness[personIndex].first = personName;
-		peopleWithLaziness[personIndex].second = laziness;
+		personLaziness[personIndex] = laziness;
 
 		totalInverseLaziness += 1/(double)laziness;
 	}
 
 	// Calculate normalised laziness
-	vector<pair<string, double>> peopleWithNormProb(people.size());
+	vector<double> personProbs(people.size());
 	for (int personIndex = 0; personIndex < people.size(); personIndex++) {
-		peopleWithNormProb[personIndex].first = peopleWithLaziness[personIndex].first;
-		peopleWithNormProb[personIndex].second = (1/(double)peopleWithLaziness[personIndex].second) / (double)totalInverseLaziness;
+		personProbs[personIndex] = (1/(double)personLaziness[personIndex]) / (double)totalInverseLaziness;
 	}
 	
 	// Iterate over iterations
 	for (int iter = 0; iter < iterations; iter++) {
 		// Iterate through tasks
-		for (string task : tasks) {
-			// Choose random person for task based on probabilities -> FUNCTION 1
-			string randomPerson;
-			computedRota[iter][task] = randomPerson;
+		for (int taskIndex = 0; taskIndex < tasks.size(); taskIndex++) {
+			// Choose random person for task based on probabilities
+			computedRota[iter][taskIndex] = chooseRand(peopleNames, personProbs);
 		}
 	}
+}
+
+string chooseRand(vector<string> choices, vector<double> probabilities) {
+	double randNum = rand() / double(RAND_MAX);
+	
+	double currentSum = 0.0;
+	int personIndex = 0;
+
+	string choice;
+
+	while (currentSum < 1.0) {
+		currentSum += probabilities[personIndex];
+		if (randNum < currentSum) {
+			choice = choices[personIndex];
+			break;
+		}
+		personIndex++;
+	}
+
+	return choice;
 }
 

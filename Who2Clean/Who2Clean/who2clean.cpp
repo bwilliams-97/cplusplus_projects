@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QSpinBox>
+#include "rotacomputer.h">
 
 using namespace std;
 
@@ -40,8 +41,6 @@ Who2Clean::Who2Clean(QWidget *parent)
 
     // Add iterations section to window
     fullWindow->addLayout(computeRow);
-
-    //------------Display computation output--------
 
     setLayout(fullWindow);
 
@@ -106,14 +105,29 @@ QGridLayout* Who2Clean::CreateIterationSection() {
     QGridLayout* computeRow = new QGridLayout();
 
     QLabel* iterationsText = new QLabel("Iterations");
-    QSpinBox* numIterationsBox = new QSpinBox(this);
+
+    iterationSpinBox = new QSpinBox(this);
+    iterationSpinBox->setMinimum(1);
+
     QPushButton* computeButton = new QPushButton("Compute", this);
 
     computeRow->addWidget(iterationsText, 0, 0);
-    computeRow->addWidget(numIterationsBox, 0, 1);
+    computeRow->addWidget(iterationSpinBox, 0, 1);
     computeRow->addWidget(computeButton, 0, 2);
 
+    connect(computeButton, SIGNAL(clicked()), this, SLOT(HandleComputeButton()));
+
     return computeRow;
+}
+
+void Who2Clean::HandleComputeButton() {
+    rotacomputer(personOptions.optionsList, taskOptions.optionsList, iterationSpinBox->value());
+    QMessageBox* computeAlert = new QMessageBox();
+    computeAlert->setText("Rota saved to file");
+    computeAlert->exec();
+
+    personOptions.optionsList->clear();
+    taskOptions.optionsList->clear();
 }
 
 void Who2Clean::HandleClearPersonButton() {

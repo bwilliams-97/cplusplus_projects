@@ -6,17 +6,19 @@
 #include <map>
 #include <vector>
 
+using namespace std;
+
 class rotacomputer
 {
 public:
-	rotacomputer();
 	rotacomputer(QListWidget*, QListWidget*, int);
 
-	void writeToCsv();
+	void writeToCsv(vector<string>);
 
-	std::vector<std::map<std::string, std::string>> computedRota;
+	vector<map<int, string>> computedRota;
 
 private:
 	void computeRota(vector<string>, vector<string>, int);
 };
 
+string chooseRand(vector<string>, vector<double>);
