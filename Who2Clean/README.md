@@ -7,4 +7,7 @@ A rota is computed for a chosen number of iterations and saved to csv.
 
 ## Files
 - [Who2Clean](Who2Clean/who2clean.cpp): GUI implementation and event handling.
-- [RotaComputer](Who2Clean/rotacomputer.cpp): Background computation for generating rota and saving to csv. 
+- [RotaComputer](Who2Clean/rotacomputer.cpp): Background computation for generating rota and saving to csv.
+
+## Example window
+![Example image](example.png) 
