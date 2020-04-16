@@ -14,8 +14,7 @@
 using namespace std;
 
 rotacomputer::rotacomputer(QListWidget* personListWidget, QListWidget* taskListWidget, int iterations) {
-	// Link function to compute button
-	// Display table somehow inside window?
+	// Create rota based on widget contents.
 	int numTasks = taskListWidget->count();
 
 	vector<map<int, string>> computedRotaInit(iterations);
@@ -24,12 +23,14 @@ rotacomputer::rotacomputer(QListWidget* personListWidget, QListWidget* taskListW
 	vector<string> tasks(numTasks);
 	vector<string> people(taskListWidget->count());
 
+	// Extract tasks
 	for (int taskIndex = 0; taskIndex < numTasks; taskIndex++)
 	{
 		QListWidgetItem* item = taskListWidget->item(taskIndex);
 		tasks[taskIndex] = item->text().toStdString();
 	}
 
+	// Extract people
 	for (int personIndex = 0; personIndex < people.size(); personIndex++) {
 		QListWidgetItem* item = personListWidget->item(personIndex);
 		people[personIndex] = item->text().toStdString();
@@ -114,6 +115,7 @@ void rotacomputer::computeRota(vector<string> people, vector<string> tasks, int 
 }
 
 string chooseRand(vector<string> choices, vector<double> probabilities) {
+	// Select option from choices based on probabilities vector
 	double randNum = rand() / double(RAND_MAX);
 	
 	double currentSum = 0.0;

@@ -14,6 +14,7 @@ using namespace std;
 Who2Clean::Who2Clean(QWidget *parent)
 	: QWidget(parent)
 {
+    // Main widget
     QVBoxLayout* fullWindow = new QVBoxLayout(this);
     QHBoxLayout* chooseOptions = new QHBoxLayout();
     QHBoxLayout* computeBox = new QHBoxLayout();
@@ -45,7 +46,6 @@ Who2Clean::Who2Clean(QWidget *parent)
     setLayout(fullWindow);
 
 	int addPersonCoords[] = { 50,50, 100,100 };
-	//this->AddButton("Add", addPersonCoords);
 	ui.setupUi(this);
 
 }
@@ -63,6 +63,7 @@ RotaOptions::RotaOptions(QListWidget* listWidget, QLineEdit* optName, QLineEdit*
 }
 
 std::pair<QVBoxLayout*, RotaOptions> Who2Clean::CreateOptionsSection(QString inputName, QString parameterName) {
+    // Options section with tasks input and people input.
     QVBoxLayout* chooseOptionBox = new QVBoxLayout();
     QGridLayout* addNewOption = new QGridLayout();
 
@@ -102,6 +103,7 @@ std::pair<QVBoxLayout*, RotaOptions> Who2Clean::CreateOptionsSection(QString inp
 }
 
 QGridLayout* Who2Clean::CreateIterationSection() {
+    // Section with label, spin box for iterations and compute button.
     QGridLayout* computeRow = new QGridLayout();
 
     QLabel* iterationsText = new QLabel("Iterations");
@@ -121,11 +123,15 @@ QGridLayout* Who2Clean::CreateIterationSection() {
 }
 
 void Who2Clean::HandleComputeButton() {
+    // Compute rota
     rotacomputer(personOptions.optionsList, taskOptions.optionsList, iterationSpinBox->value());
+
+    // Generate alert message box
     QMessageBox* computeAlert = new QMessageBox();
     computeAlert->setText("Rota saved to file");
     computeAlert->exec();
 
+    // Clear task and person lists
     personOptions.optionsList->clear();
     taskOptions.optionsList->clear();
 }
